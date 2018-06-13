@@ -1,0 +1,195 @@
+@import "ms-countdown-timer";
+
+:root {
+  // CSS variable to update progress
+  --progress: 100;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+
+  // Decorative background
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-left: 50vw solid #FF6E6E;
+    border-right: 50vw solid #FF6E6E;
+    border-top: 50vh solid #354051;
+    border-bottom: 50vh solid #354051;
+    z-index: -1;
+  }
+}
+
+// Mobile container
+.container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 340px;
+  height: 540px;
+  background-color: #354051;
+  box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+
+  // Header bar, just a aesthetic detail
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 25px;
+    background-color: rgba(0, 0, 0, 0.2);
+    z-index: 3;
+  }
+}
+
+// Container for progress bar and expansive button
+.progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+
+  // Expansive button, initially the red button we can see
+  &:before {
+    content: '';
+    position: absolute;
+    left: calc(50% - 30px);
+    bottom: 50px;
+    width: 60px;
+    height: 60px;
+    background-color: #FF6E6E;
+    border-radius: 100%;
+    transform: scale(1);
+    transition: 0.8s transform;
+  }
+
+  // Progress bar
+  &:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 50px 0 50px rgba(0, 0, 0, 0.1);
+    transform: translateY(calc(var(--progress) * 1%)); // Set translation using `--progress`
+    transition: 0.95s transform cubic-bezier(0.175, 0.885, 0.320, 1.275); // easeOutBack
+  }
+}
+
+// Countdown counter, initially hidden
+.counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 100px;
+  font-family: 'Roboto Mono', monospace;
+  color: #FFFFFF;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 3;
+  transition: 0.5s opacity;
+}
+
+// Button to toggle countdown
+.button {
+  position: absolute;
+  left: calc(50% - 30px);
+  bottom: 50px;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  color: transparent;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  border-radius: 100%;
+  text-indent: -999px; // Hiding text
+  z-index: 2;
+  cursor: pointer;
+
+  // Gray button to stop countdown
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    background-color: transparent;
+    transform: scale(0);
+    transition: 0.5s 0.5s transform, 0.5s 0.5s background-color;
+  }
+
+  // Element for the expansive shadow effect on click
+  &:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    opacity: 0;
+    box-shadow: inset 0 0 0 20px rgba(255, 255, 255, 1);
+    transition: 0s;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+// Styles for countdown running
+.container--running {
+
+  // Expand the red button to cover the container entirely
+  // Using the `easeInBack` easing to get a nice effect
+  .progress:before {
+    transform: scale(17);
+    transition: 0.8s transform cubic-bezier(0.600, -0.280, 0.735, 0.045); // easeInBack
+  }
+
+  // Show the counter
+  .counter {
+    opacity: 1;
+    transition: 1s opacity;
+  }
+
+  .button {
+
+    // Show the gray circle (stop button)
+    &:before {
+      background-color: #354051;
+      transform: scale(1);
+      transition: 0.5s 0.5s transform, 0.5s 0.5s background-color;
+    }
+
+    // Scale the element and reduce the shadow, getting the desired effect
+    &:after {
+      opacity: 1;
+      transform: scale(2.5);
+      box-shadow: inset 0 0 0 0 rgba(255, 255, 255, 0);
+      transition: all 0.8s, opacity 0.3s;
+    }
+  }
+}

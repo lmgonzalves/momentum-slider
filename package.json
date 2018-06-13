@@ -1,0 +1,25 @@
+{
+  "name": "particles",
+  "version": "1.0.0",
+  "description": "Experiment with particles",
+  "main": "dist/particles.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "animation"
+  ],
+  "author": "lmgonzalves",
+  "license": "MIT",
+  "devDependencies": {
+    "browser-sync": "^2.23.6",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^5.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-uglify": "^3.0.0"
+  },
+  "dependencies": {
+    "pump": "^3.0.0"
+  }
+}

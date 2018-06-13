@@ -1,0 +1,69 @@
+// This CSS file can be used as a starting point for slider styles
+// All backgrounds are used for testing only
+
+.ms-container {
+  position: relative;
+  margin: 0 auto;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.2);
+
+  &:before {
+    content: '';
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 100%;
+  }
+}
+
+.ms-container--horizontal {
+  width: 400px;
+  max-width: 100%;
+
+  &:before {
+    left: calc(50% - 45px);
+    top: 0;
+    width: 90px;
+    height: 100%;
+  }
+}
+
+.ms-container--vertical {
+  width: 90px;
+  height: 400px;
+  max-height: 100%;
+
+  &:before {
+    left: 0;
+    top: calc(50% - 45px);
+    width: 100%;
+    height: 90px;
+  }
+
+  .ms-slide {
+    display: flex;
+  }
+}
+
+.ms-track {
+  position: relative;
+  left: calc(50% - 45px);
+  white-space: nowrap;
+  font-size: 0;
+}
+
+.ms-slide {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  user-select: none;
+  font-size: 20px;
+
+  &:nth-child(2n) {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  &:nth-child(2n + 1) {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}

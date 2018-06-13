@@ -1,0 +1,61 @@
+// Slider dimmensions
+$ms-container-width: 340px;
+$ms-slide-width: 125px;
+$ms-slide-height: 540px;
+
+// Slider container
+.ms-container {
+  position: relative;
+  top: 50%;
+  width: $ms-container-width;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+  transform: translateY(-50%);
+
+  // Gradients to hide the adjacent numbers smoothly
+  &:before, &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 80px;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+  &:before {
+    left: 0;
+    background-image: linear-gradient(to right, rgba(53, 64, 81, 1) 25%, rgba(53, 64, 81, 0));
+  }
+  &:after {
+    right: 0;
+    background-image: linear-gradient(to left, rgba(53, 64, 81, 1) 25%, rgba(53, 64, 81, 0));
+  }
+}
+
+// Slider track
+.ms-track {
+  position: relative;
+  left: calc(50% - #{$ms-slide-width / 2}); // Centering
+  white-space: nowrap;
+  font-size: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  will-change: transform;
+}
+
+// Slides
+.ms-slide {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $ms-slide-width;
+  height: $ms-slide-height;
+  font-size: 100px;
+  font-family: 'Roboto Mono', monospace;
+  color: #FFFFFF;
+  cursor: default;
+  user-select: none;
+  will-change: transform;
+}
