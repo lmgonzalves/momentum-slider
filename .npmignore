@@ -2,5 +2,6 @@ countdown-timer/
 css/
 js/
 node_modules/
+portfolio-carousel/
 scss/
 gulpfile.js
