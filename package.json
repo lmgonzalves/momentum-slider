@@ -1,8 +1,12 @@
 {
   "name": "momentum-slider",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Create sliders with momentum!",
   "main": "dist/momentum-slider.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lmgonzalves/momentum-slider.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,6 +17,10 @@
   ],
   "author": "lmgonzalves",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lmgonzalves/momentum-slider/issues"
+  },
+  "homepage": "https://github.com/lmgonzalves/momentum-slider",
   "devDependencies": {
     "browser-sync": "^2.23.6",
     "gulp": "^3.9.1",
