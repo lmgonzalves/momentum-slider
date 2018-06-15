@@ -1,8 +1,9 @@
 {
   "name": "momentum-slider",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Create sliders with momentum!",
   "main": "dist/momentum-slider.js",
+  "unpkg": "dist/momentum-slider.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/lmgonzalves/momentum-slider.git"
