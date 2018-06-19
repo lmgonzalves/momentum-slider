@@ -12,13 +12,13 @@
 
     // Initializing the slider
     var ms = new MomentumSlider({
-        el: container,  // HTML element to append the slider
-        range: [1, 60], // Generar los elementos del slider usando el rango de números definido
-        loop: 2,        // Hacer infinito el slider, añadiendo 2 elementos extra en cada extremo
+        el: '.container', // HTML element to append the slider
+        range: [1, 60],   // Generate the elements of the slider using the range of numbers defined
+        loop: 2,          // Make the slider infinite, adding 2 extra elements at each end
         style: {
-            // Estilos para interpolar
-            // El primer valor corresponde a los elementos adyacentes
-            // El segundo valor corresponde al elemento actual
+            // Styles to interpolate as we move the slider
+            // The first value corresponds to the adjacent elements
+            // The second value corresponds to the current element
             transform: [{scale: [0.4, 1]}],
             opacity: [0.3, 1]
         }
