@@ -1,12 +1,19 @@
 // This CSS file can be used as a starting point for slider styles
 // All backgrounds are used for testing only
 
+// Slider dimmensions
+$ms-container-length: 400px;
+$ms-slide-width: 90px;
+$ms-slide-height: 90px;
+
+// Slider container
 .ms-container {
   position: relative;
   margin: 0 auto;
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.2);
 
+  // Just for testing the current slide position (centered)
   &:before {
     content: '';
     position: absolute;
@@ -15,51 +22,70 @@
   }
 }
 
+// Styles for horizontal slider
 .ms-container--horizontal {
-  width: 400px;
+  width: $ms-container-length;
   max-width: 100%;
 
   &:before {
-    left: calc(50% - 45px);
+    left: calc(50% - #{$ms-slide-width / 2});
     top: 0;
-    width: 90px;
+    width: $ms-slide-width;
     height: 100%;
+  }
+
+  // Centering slider track horizontally, to get current slide centered
+  .ms-track {
+    left: calc(50% - #{$ms-slide-width / 2});
+  }
+
+  // Positioning slides horizontally
+  .ms-slide {
+    display: inline-flex;
   }
 }
 
+// Styles for vertical slider
 .ms-container--vertical {
-  width: 90px;
-  height: 400px;
+  width: $ms-slide-width;
+  height: $ms-container-length;
   max-height: 100%;
 
   &:before {
     left: 0;
-    top: calc(50% - 45px);
+    top: calc(50% - #{$ms-slide-height / 2});
     width: 100%;
-    height: 90px;
+    height: $ms-slide-height;
   }
 
+  // Centering slider track vertically, to get current slide centered
+  .ms-track {
+    top: calc(50% - #{$ms-slide-height / 2});
+  }
+
+  // Positioning slides vertically
   .ms-slide {
     display: flex;
   }
 }
 
+// Slider track
 .ms-track {
   position: relative;
-  left: calc(50% - 45px);
   white-space: nowrap;
   font-size: 0;
 }
 
+// Slides
 .ms-slide {
-  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 90px;
-  height: 90px;
+  width: $ms-slide-width;
+  height: $ms-slide-height;
   user-select: none;
   font-size: 20px;
 
+  // A testing backgrounds for slides
   &:nth-child(2n) {
     background-color: rgba(0, 0, 0, 0.1);
   }
