@@ -240,7 +240,7 @@
                 var event = normalizeEvent(ev);
 
                 if (event.id === this.pointerId) {
-                    var index = Array.prototype.indexOf.call(this.msTrack.children, ev.target);
+                    var index = Array.prototype.indexOf.call(this.msSlides, ev.target);
                     if (!this.pointerMoved) {
                         if (index !== -1) {
                             this.currentIndex = index;
