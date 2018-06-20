@@ -6,7 +6,7 @@ Create sliders with momentum!
 
 ### Fancy Countdown Timer
 
-- **Tutorial**: Comming soon...
+- **Tutorial**: [https://scotch.io/tutorials/building-a-fancy-countdown-timer-with-momentumsliderjs](https://scotch.io/tutorials/building-a-fancy-countdown-timer-with-momentumsliderjs)
 - **Demo**: [https://lmgonzalves.github.io/momentum-slider/countdown-timer](https://lmgonzalves.github.io/momentum-slider/countdown-timer)
 - **Codepen**: [https://codepen.io/lmgonzalves/pen/JZJeYq](https://codepen.io/lmgonzalves/pen/JZJeYq)
 
