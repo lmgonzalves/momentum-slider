@@ -1,0 +1,134 @@
+@mixin ms(
+  $cssClass: 'ms-container',
+  $slider-length: 400px,
+  $slider-center: false,
+  $slide-width: 90px,
+  $slide-height: 90px,
+  $vertical: false,
+  $reverse: false,
+  $debug: false
+) {
+  // Slider container
+  .#{$cssClass} {
+    position: relative;
+    @if $slider-center {
+      margin: 0 auto;
+    }
+    overflow: hidden;
+    @if $debug {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    @if $debug {
+      // Just for testing the current slide position (centered)
+      &:before {
+        content: '';
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 100%;
+      }
+    }
+
+    @if $vertical {
+      // Styles for vertical slider
+      &.ms-container--vertical {
+        width: $slide-width;
+        height: $slider-length;
+        max-height: 100%;
+  
+        @if $debug {
+          &:before {
+            left: 0;
+            top: calc(50% - #{$slide-height / 2});
+            width: 100%;
+            height: $slide-height;
+          }
+        }
+  
+        // Centering slider track vertically, to get current slide centered
+        .ms-track {
+          flex-direction: column;
+          top: calc(50% - #{$slide-height / 2});
+        }
+  
+        @if $reverse {
+          // Reverse styles
+          &.ms-container--reverse .ms-track {
+            flex-direction: column-reverse;
+            top: auto;
+            bottom: calc(50% - #{$slide-height / 2});
+          }
+        }
+  
+        // Positioning slides vertically
+        .ms-slide {
+          display: flex;
+        }
+      }
+    } @else {
+      // Styles for horizontal slider
+      &.ms-container--horizontal {
+        width: $slider-length;
+        height: $slide-height;
+        max-width: 100%;
+  
+        @if $debug {
+          &:before {
+            left: calc(50% - #{$slide-width / 2});
+            top: 0;
+            width: $slide-width;
+            height: 100%;
+          }
+        }
+  
+        // Centering slider track horizontally, to get current slide centered
+        .ms-track {
+          left: calc(50% - #{$slide-width / 2});
+        }
+  
+        @if $reverse {
+          // Reverse styles
+          &.ms-container--reverse .ms-track {
+            flex-direction: row-reverse;
+            left: auto;
+            right: calc(50% - #{$slide-width / 2});
+          }
+        }
+  
+        // Positioning slides horizontally
+        .ms-slide {
+          display: inline-flex;
+        }
+      }
+    }
+  
+    // Slider track
+    .ms-track {
+      display: flex;
+      position: absolute;
+      white-space: nowrap;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+  
+    // Slides
+    .ms-slide {
+      align-items: center;
+      justify-content: center;
+      width: $slide-width;
+      height: $slide-height;
+      user-select: none;
+  
+      @if $debug {
+        // A testing backgrounds for slides
+        &:nth-child(2n) {
+          background-color: rgba(0, 0, 0, 0.1);
+        }
+        &:nth-child(2n + 1) {
+          background-color: rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
+  }
+}

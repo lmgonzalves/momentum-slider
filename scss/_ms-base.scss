@@ -25,6 +25,7 @@ $ms-slide-height: 90px;
 // Styles for horizontal slider
 .ms-container--horizontal {
   width: $ms-container-length;
+  height: $ms-slide-height;
   max-width: 100%;
 
   &:before {
@@ -37,6 +38,13 @@ $ms-slide-height: 90px;
   // Centering slider track horizontally, to get current slide centered
   .ms-track {
     left: calc(50% - #{$ms-slide-width / 2});
+  }
+
+  // Reverse styles
+  &.ms-container--reverse .ms-track {
+    flex-direction: row-reverse;
+    left: auto;
+    right: calc(50% - #{$ms-slide-width / 2});
   }
 
   // Positioning slides horizontally
@@ -60,7 +68,15 @@ $ms-slide-height: 90px;
 
   // Centering slider track vertically, to get current slide centered
   .ms-track {
+    flex-direction: column;
     top: calc(50% - #{$ms-slide-height / 2});
+  }
+
+  // Reverse styles
+  &.ms-container--reverse .ms-track {
+    flex-direction: column-reverse;
+    top: auto;
+    bottom: calc(50% - #{$ms-slide-height / 2});
   }
 
   // Positioning slides vertically
@@ -71,9 +87,9 @@ $ms-slide-height: 90px;
 
 // Slider track
 .ms-track {
-  position: relative;
+  display: flex;
+  position: absolute;
   white-space: nowrap;
-  font-size: 0;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -86,7 +102,6 @@ $ms-slide-height: 90px;
   width: $ms-slide-width;
   height: $ms-slide-height;
   user-select: none;
-  font-size: 20px;
 
   // A testing backgrounds for slides
   &:nth-child(2n) {

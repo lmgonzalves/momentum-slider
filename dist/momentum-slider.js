@@ -22,21 +22,22 @@
     MomentumSlider.prototype = {
         defaults: {
             el: '.ms-container',
+            cssClass: '',
             vertical: false,
             multiplier: 1,
             bounceCoefficient: 0.3,
             bounceMax: 100,
             loop: 0,
-            circular: false,
             interactive: true,
+            reverse: false,
             currentIndex: 0
         },
         initHtml: function () {
             this.msContainer = is.str(this.o.el) ? document.querySelector(this.o.el) : this.o.el;
             if (this.o.range) {
-                var html = '<div class="ms-container"><ul class="ms-track">';
+                var html = '<div class="ms-container ' + this.o.cssClass + '"><ul class="ms-track">';
                 for (var i = this.o.range[0]; i <= this.o.range[1]; i++) {
-                    html += buildSlide(i);
+                    html += is.fnc(this.o.rangeContent) ? buildSlide(this.o.rangeContent(i)) : buildSlide(i);
                 }
                 html += '</ul></div>';
                 var msHtml = document.createElement('div');
@@ -45,13 +46,13 @@
                 this.msContainer = this.msContainer.lastChild;
             }
             this.msContainer.classList.add('ms-container--' + (this.o.vertical ? 'vertical' : 'horizontal'));
-            this.msTrack = this.msContainer.firstChild;
+            if (this.o.reverse) {
+                this.msContainer.classList.add('ms-container--reverse');
+            }
+            this.msTrack = this.msContainer.children[0];
             this.msSlides = this.msTrack.children;
             this.step = this.o.vertical ? this.msSlides[0].scrollHeight : this.msSlides[0].scrollWidth;
             this.sliderLength = this.msSlides.length;
-            if (this.o.sync) {
-                this.msTrackSync = this.o.sync.msTrack;
-            }
             if (this.o.loop) {
                 var loopLength, slideIndex, fragment;
                 // begin
@@ -72,18 +73,18 @@
                 // update
                 this.sliderLength += this.o.loop * 2;
             }
+            this.sliderWidth = this.sliderLength * this.step;
         },
         initValues: function () {
-            this.boundMin = -this.step * (this.sliderLength - 1);
-            this.boundMax = 0;
+            this.boundMin = this.o.reverse ? 0 : -this.step * (this.sliderLength - 1);
+            this.boundMax = this.o.reverse ? this.step * (this.sliderLength - 1) : 0;
             this.targetPosition = this.targetPosition || 0;
             this.ticking = false;
             this.enabled = true;
             this.pointerActive = false;
             this.pointerMoved = false;
             this.trackingPoints = [];
-            this.msTrack.style[this.o.vertical ? 'height' : 'width'] = (this.sliderLength * this.step) + 'px';
-            this.msTrack.style[this.o.vertical ? 'top' : 'left'] = 'calc(50% - ' + (this.step / 2) + 'px)';
+            this.msTrack.style[this.o.vertical ? 'height' : 'width'] = this.sliderWidth + 'px';
             this.currentIndex = (this.currentIndex || this.o.currentIndex) + this.o.loop;
             this.updateSlider(undefined, true);
             this.renderTarget();
@@ -118,36 +119,31 @@
         },
         prev: function () {
             if (this.enabled) {
-                // this.currentIndex = this.currentIndex > 0 ? this.currentIndex - 1 : (this.o.circular ? this.sliderLength - 1 : this.currentIndex);
-                // this.updateSlider();
-                this.updateSlider(Math.round(this.targetPosition / this.step) * this.step + this.step);
+                this.updateSlider(Math.round(this.targetPosition / this.step) * this.step + (this.o.reverse ? -this.step : this.step));
             }
         },
         next: function () {
             if (this.enabled) {
-                // this.currentIndex = this.currentIndex + 1 < this.sliderLength ? this.currentIndex + 1 : (this.o.circular ? 0 : this.currentIndex);
-                // this.updateSlider();
-                this.updateSlider(Math.round(this.targetPosition / this.step) * this.step - this.step);
+                this.updateSlider(Math.round(this.targetPosition / this.step) * this.step + (this.o.reverse ? this.step : -this.step));
             }
         },
-        getCurrentValue: function (values, diff, lower) {
-            var lowerValue = values[0];
-            var centerValue = values[1];
-            var higherValue = values[2] || lowerValue;
-            var diffValue = lower ? centerValue - lowerValue : centerValue - higherValue;
-            return lower ? centerValue - diffValue * diff : centerValue + diffValue * diff;
+        select: function (index) {
+            if (this.enabled) {
+                // this.currentIndex = index;
+                // this.updateSlider();
+                this.updateSlider((index + this.o.loop) * (this.o.reverse ? this.step : -this.step));
+            }
         },
-        setStyle: function (index, diff, lower) {
-            var style = this.o.style;
+        setStyleToNode: function (node, style, diff, lower) {
             if (style) {
-                var _ = this;
-                var value;
+                var value = '';
                 for (var property in style) {
-                    if (property == 'transform') {
-                        value = '';
+                    if (property[0] == '.') {
+                        this.setStyleToNode(node.querySelector(property), style[property], diff, lower);
+                    } else if (property == 'transform') {
                         style[property].forEach(function(transform) {
                             for (var t in transform) {
-                                value += t + '(' + _.getCurrentValue(transform[t], diff, lower);
+                                value += t + '(' + getCurrentValue(transform[t], diff, lower);
                                 if (t == 'rotate') {
                                     value += 'deg';
                                 } else if (t == 'translateX' || t == 'translateY' || t == 'translateZ') {
@@ -157,16 +153,31 @@
                             }
                         });
                     } else {
-                        value = this.getCurrentValue(style[property], diff, lower);
+                        value = getCurrentValue(style[property], diff, lower);
                     }
-                    this.msSlides[index].style[property] = value;
+                    node.style[property] = value;
                 }
             }
         },
+        setStyle: function (index, diff, lower) {
+            this.setStyleToNode(this.msSlides[index], this.o.style, diff, lower);
+            if (is.fnc(this.o.customStyles)) {
+                this.o.customStyles(index, diff, lower);
+            }
+        },
         renderTarget: function () {
-            var sliderLength = this.sliderLength * this.step;
+            if (this.o.sync) {
+                var syncIndex = this.o.sync.length;
+                var syncSlider;
+                while (syncIndex--) {
+                    syncSlider = this.o.sync[syncIndex];
+                    syncSlider.targetPosition = (syncSlider.o.reverse ? -1 : 1) * this.targetPosition / this.sliderWidth * syncSlider.sliderWidth;
+                    syncSlider.renderTarget();
+                }
+            }
+
             var paddingLength = this.o.loop * this.step;
-            var contentLength = sliderLength - (paddingLength * 2);
+            var contentLength = this.sliderWidth - (paddingLength * 2);
             if (this.o.loop) {
                 if (-this.targetPosition < paddingLength) {
                     while (-this.targetPosition < paddingLength) {
@@ -179,7 +190,9 @@
                 }
             }
 
-            var actualIndex = -this.targetPosition / this.step;
+            // var actualIndex = -this.targetPosition / this.step;
+            var actualIndex = (this.o.reverse ? 1 : -1) * this.targetPosition / this.step;
+            this.onChangeCurrentIndex(Math.round(actualIndex));
             var lowerIndex = Math.floor(actualIndex);
             var higherIndex = Math.ceil(actualIndex);
             var lowerDiff = actualIndex - lowerIndex;
@@ -202,10 +215,7 @@
             }
 
             var transformValue = 'translate' + (this.o.vertical ? 'Y' : 'X') + '(' + this.targetPosition + 'px)';
-            this.msTrack.style[transformString] = transformValue;
-            if (this.msTrackSync) {
-                this.msTrackSync.style[transformString] = transformValue;
-            }
+            this.msTrack.style[transformProperty] = transformValue;
         },
         onDown: function (ev) {
             if (this.enabled && !this.pointerActive) {
@@ -240,7 +250,13 @@
                 var event = normalizeEvent(ev);
 
                 if (event.id === this.pointerId) {
-                    var index = Array.prototype.indexOf.call(this.msSlides, ev.target);
+                    var slide = ev.target;
+                    if (this.msTrack.contains(slide)) {
+                        while (!slide.matches('.ms-slide, .ms-track')) {
+                            slide = slide.parentNode;
+                        }
+                    }
+                    var index = Array.prototype.indexOf.call(this.msSlides, slide);
                     if (!this.pointerMoved) {
                         if (index !== -1) {
                             this.currentIndex = index;
@@ -332,8 +348,8 @@
             var newTargetPosition = this.targetPosition + (this.decVel * 12);
             var newTargetPositionOffset = newTargetPosition % this.step;
             newTargetPosition = newTargetPosition - newTargetPositionOffset;
-            if (-newTargetPositionOffset > this.step / 2) {
-                newTargetPosition -= this.step;
+            if (Math.abs(newTargetPositionOffset) > this.step / 2) {
+                newTargetPosition += (newTargetPositionOffset > 0 ? 1 : -1) * this.step;
             }
 
             this.updateSlider(newTargetPosition);
@@ -349,9 +365,9 @@
         },
         updateSlider: function (newTargetPosition, initial) {
             if (is.und(newTargetPosition)) {
-                newTargetPosition = -this.currentIndex * this.step;
+                newTargetPosition = (this.o.reverse ? 1 : -1) * this.currentIndex * this.step;
             } else {
-                this.currentIndex = -newTargetPosition / this.step;
+                this.currentIndex = (this.o.reverse ? 1 : -1) * newTargetPosition / this.step;
             }
             this.fixCurrentIndex();
             if (newTargetPosition !== this.targetPosition) {
@@ -381,16 +397,38 @@
             var from = this.targetPosition;
             var to = newTargetPosition;
             this.animateInstance = animate(function(progress) {
-                _.targetPosition = to > from ? from + ((to - from) * progress) : from - ((from - to) * progress);
-                var sliderMax = -(_.sliderLength - 1) * _.step;
-                if (!back && !_.o.loop && _.o.bounceCoefficient && ((_.targetPosition > 0 && _.targetPosition > Math.min(to * _.o.bounceCoefficient, _.o.bounceMax)) || (_.targetPosition < sliderMax && _.targetPosition < sliderMax - Math.min(-(to - sliderMax) * _.o.bounceCoefficient, _.o.bounceMax)))) {
+                _.targetPosition = to > from ? from + ((to - from) * progress) : from - ((from - to) * progress); // 0 - ((0 - -2100) * progress)
+                var sliderMin = _.o.reverse ? 0 : -(_.sliderLength - 1) * _.step;
+                var sliderMax = _.o.reverse ? (_.sliderLength - 1) * _.step : 0;
+                if (!back &&
+                    !_.o.loop &&
+                    _.o.bounceCoefficient &&
+                    (
+                        (
+                            _.targetPosition > sliderMax &&
+                            _.targetPosition > sliderMax + Math.min((to - sliderMax) * _.o.bounceCoefficient, _.o.bounceMax)
+                        ) ||
+                        (
+                            _.targetPosition < sliderMin &&
+                            _.targetPosition < sliderMin - Math.min(-(to - sliderMin) * _.o.bounceCoefficient, _.o.bounceMax)
+                        )
+                    )
+                ) {
                     _.animateInstance.stop();
-                    _.animateTarget(_.targetPosition > 0 ? 0 : sliderMax, false, true);
-                    _.currentIndex = _.targetPosition > 0 ? 0 : _.sliderLength - 1;
+                    _.animateTarget(_.targetPosition < sliderMin ? sliderMin : sliderMax, false, true);
+                    _.currentIndex = _.targetPosition < sliderMin ? 0 : _.sliderLength - 1;
                 } else {
                     _.renderTarget();
                 }
             }, initial ? 0 : 500, function(t) { return t * (2 - t); });
+        },
+        onChangeCurrentIndex: function (index) {
+            var currentIndex = this.o.loop ? index - this.o.loop : index;
+            currentIndex = currentIndex === this.sliderLength - this.o.loop * 2 ? 0 : currentIndex;
+            if (is.fnc(this.o.change) && currentIndex !== this.lastCurrentIndex) {
+                this.o.change(currentIndex, this.lastCurrentIndex);
+                this.lastCurrentIndex = currentIndex;
+            }
         },
         getCurrentIndex: function () {
             return this.o.loop ? this.currentIndex - this.o.loop : this.currentIndex;
@@ -407,15 +445,10 @@
     // Utils
 
     var is = {
-        arr: function (a) {
-            return Array.isArray(a);
-        },
-        str: function (a) {
-            return typeof a === 'string';
-        },
-        und: function (a) {
-            return typeof a === 'undefined';
-        }
+        arr: function (a) { return Array.isArray(a); },
+        str: function (a) { return typeof a === 'string'; },
+        und: function (a) { return typeof a === 'undefined'; },
+        fnc: function(a) { return typeof a === 'function' }
     };
 
     function stringToHyphens(str) {
@@ -429,7 +462,7 @@
     }
 
     var t = 'transform';
-    var transformString = (getCSSValue(document.body, t) ? t : '-webkit-' + t);
+    var transformProperty = (getCSSValue(document.body, t) ? t : '-webkit-' + t);
 
     function buildSlide(value) {
         return '<li class="ms-slide">' + value + '</li>';
@@ -455,8 +488,10 @@
             var stopped = false;
             var animation = function (t) {
                 var progress = (t - start) / duration;
+                if (progress < 0) progress = 0;
                 if (progress > 1) progress = 1;
-                step(is.und(easing) ? progress : easing(progress));
+                if (is.fnc(easing)) progress = easing(progress);
+                step(progress);
                 if (progress !== 1 && !stopped) timer = requestAnimationFrame(animation);
             };
             timer = requestAnimationFrame(animation);
@@ -511,6 +546,18 @@
         return 0.000005 * Math.pow(val, 2) + 0.0001 * val + 0.55;
     }
 
-    return MomentumSlider;
+    function getCurrentValue(values, diff, lower) {
+        var lowerValue = values[0];
+        var centerValue = values[1];
+        var higherValue = values[2] || lowerValue;
+        var diffValue = lower ? centerValue - lowerValue : centerValue - higherValue;
+        return lower ? centerValue - diffValue * diff : centerValue + diffValue * diff;
+    }
+
+    return extend(MomentumSlider, {
+        extend: extend,
+        transformProperty: transformProperty,
+        getCurrentValue: getCurrentValue
+    });
 
 })));
