@@ -1,4 +1,17 @@
+// SCSS mixin to generate the final CSS code for the slider
+
+// Params:
+// - $cssClass: CSS class to match the slider container
+// - $slider-length: Length (width or height) of slider container
+// - $slider-center: If slider should be centered
+// - $slide-width: Fixed width for each slide
+// - $slide-height: Fixed height for each slide
+// - $vertical: If slider should be vertical (true), or horizontal (false)
+// - $reverse: If slider should have reversed slides (first items at the end)
+// - $debug: Show helpful background colors to help debugging
+
 @mixin ms(
+  // Default values
   $cssClass: 'ms-container',
   $slider-length: 400px,
   $slider-center: false,

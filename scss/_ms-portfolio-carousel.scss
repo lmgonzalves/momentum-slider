@@ -6,17 +6,19 @@
 $ms-images-slide-width: 700px;
 $ms-images-slide-height: 400px;
 
+// SCSS mixin to generate the final CSS code for the slider
 @include ms(
-  $cssClass: 'ms--images',
-  $slider-length: 100%,
-  $slider-center: false,
-  $slide-width: $ms-images-slide-width,
-  $slide-height: $ms-images-slide-height,
-  $vertical: false,
-  $reverse: false,
-  $debug: false
+  $cssClass: 'ms--images', // CSS class to match the slider container
+  $slider-length: 100%,    // The slider container will have full width
+  $slider-center: false,   // Don't need to center it, as it is full width
+  $slide-width: $ms-images-slide-width,   // Fixed width for each slide
+  $slide-height: $ms-images-slide-height, // Fixed height for each slide
+  $vertical: false, // The slider should be horizontal
+  $reverse: false,  // Normal order
+  $debug: false     // No debbug backgrounds in production
 );
 
+// Custom styles for images slider
 .ms--images {
   left: calc(50% - #{$ms-images-slide-width / 2 - 70px});
 
@@ -76,6 +78,7 @@ $ms-numbers-slide-height: 240px;
   left: calc(50% - #{$ms-images-slide-width / 2 + 30px});
   top: calc(50% - #{$ms-images-slide-height / 2 + $ms-numbers-slide-height / 2 - 20px});
   z-index: -1;
+  pointer-events: none;
 
   .ms-slide {
     font-size: 9em;
@@ -105,6 +108,8 @@ $ms-titles-slide-height: 170px;
   position: absolute;
   left: calc(50% - #{$ms-images-slide-width / 2 + 70px});
   top: calc(50% - #{$ms-titles-slide-height / 2});
+  z-index: 1;
+  pointer-events: none;
 
   .ms-track {
     white-space: normal;
@@ -142,6 +147,7 @@ $ms-links-slide-height: 60px;
   position: absolute;
   left: calc(50% - #{$ms-images-slide-width / 2 + 70px});
   top: calc(50% + #{$ms-titles-slide-height / 2 + 20px});
+  z-index: 1;
 
   .ms-track {
     white-space: normal;
@@ -167,6 +173,7 @@ $ms-links-slide-height: 60px;
   margin: 0;
   padding: 0;
   overflow: hidden;
+  z-index: 1;
 
   &__button {
     display: inline-block;
@@ -204,7 +211,7 @@ $ms-links-slide-height: 60px;
 }
 
 
-// Responsive
+// Responsive styles
 
 @media screen and (max-width: 860px) {
   .ms--numbers {
@@ -218,20 +225,8 @@ $ms-links-slide-height: 60px;
   }
 
   .ms--links {
-    position: absolute;
     left: calc(50% - #{$ms-links-slide-width / 2});
     top: calc(50% + #{$ms-links-slide-height / 2 + 50px});
-  
-    .ms-track {
-      white-space: normal;
-    }
-  
-    .ms-slide__link {
-      font-weight: 600;
-      padding: 5px 0 8px;
-      border-bottom: 2px solid white;
-      cursor: pointer;
-    }
   }
 
   .pagination {

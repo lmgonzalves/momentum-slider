@@ -43,7 +43,6 @@ a {
   display: flex;
   align-items: center;
   padding: 30px;
-  // background-color: rgba(0, 0, 0, 0.1);
 }
 
 .header__logo {
@@ -78,7 +77,6 @@ a {
   justify-content: flex-end;
   align-items: center;
   padding: 30px;
-  // background-color: rgba(0, 0, 0, 0.1);
 }
 
 .footer__menu__link {
@@ -92,10 +90,6 @@ a {
   align-items: center;
   justify-content: center;
   flex: 1;
-}
-
-.ms--numbers, .ms--titles {
-  pointer-events: none;
 }
 
 
