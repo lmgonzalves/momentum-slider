@@ -1,6 +1,6 @@
 {
   "name": "momentum-slider",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Create sliders with momentum!",
   "main": "dist/momentum-slider.js",
   "unpkg": "dist/momentum-slider.min.js",
