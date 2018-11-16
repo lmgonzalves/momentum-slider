@@ -16,10 +16,6 @@ Create sliders with momentum!
 - **Demo**: [https://lmgonzalves.github.io/momentum-slider/portfolio-carousel/](https://lmgonzalves.github.io/momentum-slider/portfolio-carousel/)
 - **Codepen**: [https://codepen.io/lmgonzalves/full/djEgmv/](https://codepen.io/lmgonzalves/full/djEgmv/)
 
-## Documentation
-
-In progress... Stay tunned!
-
 ## Credits
 
 **MomentumSlider** codebase is based in [Impetus.js](http://chrisbateman.github.io/impetus), a great library to add momentum to anything.
