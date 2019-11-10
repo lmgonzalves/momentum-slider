@@ -233,15 +233,33 @@
         },
         onMove: function (ev) {
             if (this.enabled && this.pointerActive) {
-                this.pointerMoved = true;
-                ev.preventDefault();
                 var event = normalizeEvent(ev);
 
                 if (event.id === this.pointerId) {
                     this.pointerCurrentX = event.x;
                     this.pointerCurrentY = event.y;
-                    this.addTrackingPoint(this.pointerLastX, this.pointerLastY);
-                    this.requestTick();
+                    
+                    var shouldMoveSlider = this.pointerMoved
+                    if (!this.pointerMoved) {
+                        var movingVertically =
+                            Math.abs(Math.abs(this.pointerCurrentX) - Math.abs(this.pointerLastX)) <
+                            Math.abs(Math.abs(this.pointerCurrentY) - Math.abs(this.pointerLastY))
+                        if (
+                            (this.o.vertical && movingVertically) ||
+                            (!this.o.vertical && !movingVertically)
+                        ) {
+                            shouldMoveSlider = true
+                        }
+                    }
+
+                    if (shouldMoveSlider) {
+                        ev.preventDefault();
+                        this.pointerMoved = true;
+                        this.addTrackingPoint(this.pointerLastX, this.pointerLastY);
+                        this.requestTick();
+                    } else {
+                        this.stopTracking(-1);
+                    }
                 }
             }
         },
